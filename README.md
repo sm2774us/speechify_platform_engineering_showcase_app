@@ -170,7 +170,7 @@ npm start
 ### 4.4 End-to-End System Sequence Diagram (The Quiet StoreKit Race)
 
 ```mermaid
-sequenceDiagram
+​sequenceDiagram
     participant U as User on Mac App
     participant G as Speechify API Gateway
     participant E as Entitlements Engine
