@@ -106,19 +106,19 @@ npm start
 
 ### 4.1 Application Master Layout & Telemetry Bar
 ```
-+---------------------------------------------------------------------------------------------------------+
-| [GCP ACTIVE: us-east1-iad] | [P95 TTFB: 142ms] | [Accuracy: 100.000%] | [Button: Candidate Dossier]    |
-+---------------------------------------------------------------------------------------------------------+
-| [S] SPEECHIFY PLATFORM ENGINE v3.8       | Multi-Client: [iOS] [Android] [Mac] [Chrome Ext] [Web]       |
-+---------------------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------------+
+| [GCP ACTIVE: us-east1-iad] | [P95 TTFB: 142ms] | [Accuracy: 100.000%] | [Button: Candidate Dossier]        |
++------------------------------------------------------------------------------------------------------------+
+| [S] SPEECHIFY PLATFORM ENGINE v3.8       | Multi-Client: [iOS] [Android] [Mac] [Chrome Ext] [Web]          |
++------------------------------------------------------------------------------------------------------------+
 | [ Tab 1: TTS API ] [ Tab 2: Entitlements ] [ Tab 3: Metering ] [ Tab 4: Inspector ] [ Tab 5: AI ] [ ADRs]  |
-+---------------------------------------------------------------------------------------------------------+
-|                                                                                                         |
-|                                        ACTIVE VIEW CONTAINER                                            |
-|                                                                                                         |
-+---------------------------------------------------------------------------------------------------------+
-| Footer: GCP Cloud Run + GKE | Cloud Pub/Sub FIFO | Memorystore Redis | Cloud Spanner Cryptographic Ledger|
-+---------------------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------------+
+|                                                                                                            |
+|                                        ACTIVE VIEW CONTAINER                                               |
+|                                                                                                            |
++------------------------------------------------------------------------------------------------------------+
+| Footer: GCP Cloud Run + GKE | Cloud Pub/Sub FIFO | Memorystore Redis | Cloud Spanner Cryptographic Ledger  |
++------------------------------------------------------------------------------------------------------------+
 ```
 
 ### 4.2 Cross-Store Entitlement State Machine Wireframe
@@ -126,65 +126,68 @@ npm start
 +---------------------------------------------------------------------------------------------------------+
 |  CANONICAL USER ENTITLEMENT (Spanner / Postgres)       |  PRODUCTION EDGE-CASE SIMULATORS               |
 |  +---------------------------------------------------+ |  +-------------------------------------------+ |
-|  | User ID: usr_speechify_50m_canonical               | |  | [1. The Quiet StoreKit Race]              | |
+|  | User ID: usr_speechify_50m_canonical              | |  | [1. The Quiet StoreKit Race]              | |
 |  | Tier:    PREMIUM ANNUAL (Apple StoreKit 2)        | |  |    Apple drops webhook; 24h grace token.  | |
-|  | Status:  ACTIVE (Expires: 2027-03-15)             | |  | [2. Cross-Store Upgrade Conflict]        | |
+|  | Status:  ACTIVE (Expires: 2027-03-15)             | |  | [2. Cross-Store Upgrade Conflict]         | |
 |  | Clients: [iOS] [Mac] [Chrome Ext] [Web] [Android] | |  |    iOS ($11.99) -> Stripe Web ($299/yr)   | |
-|  | SSoT Version: 4 | Grace Period: INACTIVE          | |  | [3. Google Play Retry Recovery]          | |
+|  | SSoT Version: 4 | Grace Period: INACTIVE          | |  | [3. Google Play Retry Recovery]           | |
 |  +---------------------------------------------------+ |  |    Out-of-order RTDN payment unblocked.   | |
 |                                                        |  | [4. Immediate Refund Revocation]          | |
 |  [Button: Run Idempotent Cron Sweep (1,240 accts)]     |  |    Session caches evicted across 5 apps.  | |
 |                                                        |  +-------------------------------------------+ |
 +---------------------------------------------------------------------------------------------------------+
 |  LIVE WEBHOOK INGESTION & IDEMPOTENCY AUDIT STREAM                                                      |
-|  +----------------------------------------------------------------------------------------------------+ |
-|  | Provider    | Event       | Status             | Idempotency Key     | Signature (HMAC-SHA256) | |
-|  |-------------+-------------+--------------------+---------------------+-------------------------| |
-|  | Apple Store | DID_RENEW   | PROCESSED          | apple:renew:100098  | sha256=9f82d1a4...      | |
-|  | Apple Store | DID_RENEW   | DUPLICATE_IGNORED  | apple:renew:100098  | sha256=9f82d1a4...      | |
-|  | Google Play | RECOVERED   | PROCESSED          | gp:recov:88231      | sha256=3c41b802...      | |
-|  +----------------------------------------------------------------------------------------------------+ |
+|  +------------------------------------------------------------------------------------------------+     |
+|  | Provider    | Event       | Status             | Idempotency Key     | Signature (HMAC-SHA256) |     |
+|  |-------------+-------------+--------------------+---------------------+-------------------------|     |
+|  | Apple Store | DID_RENEW   | PROCESSED          | apple:renew:100098  | sha256=9f82d1a4...      |     |
+|  | Apple Store | DID_RENEW   | DUPLICATE_IGNORED  | apple:renew:100098  | sha256=9f82d1a4...      |     |
+|  | Google Play | RECOVERED   | PROCESSED          | gp:recov:88231      | sha256=3c41b802...      |     |
+|  +------------------------------------------------------------------------------------------------+     |
 +---------------------------------------------------------------------------------------------------------+
 ```
 
 ### 4.3 High-Throughput Metering Wireframe (50M+ Scale)
 ```
 +---------------------------------------------------------------------------------------------------------+
-|  50M+ CONSUMPTION METERING ENGINE                    |  LIVE CONCURRENCY STRESS TEST (10-100 Workers)  |
+|  50M+ CONSUMPTION METERING ENGINE                    |  LIVE CONCURRENCY STRESS TEST (10-100 Workers)   |
 |  +-------------------------------------------------+ |  +---------------------------------------------+ |
 |  | Total Chars Metered: 10,081,200 chars           | |  | Slider: [=======o===] 50 Parallel Streams   | |
 |  | Audio Words Metered:  2,016,240 words           | |  | [Button: Dispatch 50 Concurrent Streams]    | |
 |  | Average Flush Lag:   42 ms                      | |  | Status: CONCURRENCY VERIFIED (ZERO DRIFT)   | |
 |  | Balance Drift:       0.000%                     | |  | Processed: 3,450 chars in 12.4ms (248µs/req)| |
 |  +-------------------------------------------------+ |  +---------------------------------------------+ |
-|                                                      |                                                 |
-|  TWO-TIER PIPELINE ARCHITECTURE                      |  CLIENT PLATFORM BREAKDOWN                      |
-|  [Tier 1: Atomic In-Memory Buffer] (<1ms)            |  - Chrome Extension: 3,890,400 chars (38%)      |
-|         │                                            |  - Mac Native:       2,150,000 chars (21%)      |
-|         ▼ (Batch flush every 500ms)                  |  - Web Application:  1,640,100 chars (16%)      |
-|  [Tier 2: Bigtable / Spanner Immutable Ledger]       |  - iOS Mobile:       1,420,500 chars (14%)      |
-|                                                      |  - Android Mobile:     980,200 chars (11%)      |
+|                                                      |                                                  |
+|  TWO-TIER PIPELINE ARCHITECTURE                      |  CLIENT PLATFORM BREAKDOWN                       |
+|  [Tier 1: Atomic In-Memory Buffer] (<1ms)            |  - Chrome Extension: 3,890,400 chars (38%)       |
+|         │                                            |  - Mac Native:       2,150,000 chars (21%)       |
+|         ▼ (Batch flush every 500ms)                  |  - Web Application:  1,640,100 chars (16%)       |
+|  [Tier 2: Bigtable / Spanner Immutable Ledger]       |  - iOS Mobile:       1,420,500 chars (14%)       |
+|                                                      |  - Android Mobile:     980,200 chars (11%)       |
 +---------------------------------------------------------------------------------------------------------+
 ```
 
 ### 4.4 End-to-End System Sequence Diagram (The Quiet StoreKit Race)
-```
-[User on Mac App]         [Speechify API Gateway]      [Entitlements Engine]     [Apple App Store Server]
-       │                            │                           │                           │
-       │── 1. POST /tts/synthesize ─▶                           │                           │
-       │   (Cached token expired)   │── 2. Validate Token ─────▶│                           │
-       │                            │                           │── 3. Query Webhook Cache ─▶ (Quiet/Delayed)
-       │                            │                           │◀─── No ASN v2 event ──────┘
-       │                            │                           │
-       │                            │                           │── 4. Evaluate Grace Period
-       │                            │                           │      (Apple 16-day window = ACTIVE)
-       │                            │                           │
-       │                            │◀── 5. Issue 24h Grace ────│
-       │                            │       Lease Token         │── 6. Enqueue Cloud Task ──▶
-       │                            │                           │      (Async retry query)  │
-       │◀── 7. Audio Stream Chunks ─│                           │                           │
-       │   (Zero Playback Cutoff)   │                           │                           │
-```
+
+# Entitlements Grace Period Flow
+
+​```mermaid
+sequenceDiagram
+    participant U as User on Mac App
+    participant G as Speechify API Gateway
+    participant E as Entitlements Engine
+    participant A as Apple App Store Server
+
+    U->>G: 1. POST /tts/synthesize (Cached token expired)
+    G->>E: 2. Validate Token
+    E->>A: 3. Query Webhook Cache
+    Note right of A: Quiet/Delayed
+    A-->>E: No ASN v2 event
+    Note over E: 4. Evaluate Grace Period (Apple 16-day window = ACTIVE)
+    E-->>G: 5. Issue 24h Grace Lease Token
+    E->>A: 6. Enqueue Cloud Task (Async retry query)
+    G-->>U: 7. Audio Stream Chunks (Zero Playback Cutoff)
+​```
 
 ---
 
