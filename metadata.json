@@ -1,0 +1,6 @@
+{
+  "name": "Speechify Platform Engineering Showcase",
+  "description": "Production-grade backend architecture, cross-store subscription reconciliation, high-throughput consumption metering, and public TTS API systems for 50M+ users.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
