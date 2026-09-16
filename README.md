@@ -201,7 +201,11 @@ In `server/platform/metering-ledger.ts`, concurrent load is tested using `setImm
 
 ### 5.3 Cryptographic SHA-256 Ledger Chaining
 Every consumption batch and subscription state transition is recorded in an immutable append-only ledger (`server/platform/deep-inspector.ts`).
-$$\text{Hash}_n = \text{SHA-256}(\text{Seq}_n \parallel \text{Timestamp} \parallel \text{Type} \parallel \text{UserId} \parallel \Delta \parallel \text{BalanceAfter} \parallel \text{Metadata} \parallel \text{Hash}_{n-1})$$
+
+$$
+\text{Hash}_n = \text{SHA-256}(\text{Seq}_n \parallel \text{Timestamp} \parallel \text{Type} \parallel \text{UserId} \parallel \Delta \parallel \text{BalanceAfter} \parallel \text{Metadata} \parallel \text{Hash}_{n-1})
+$$
+
 The frontend includes a real-time verification routine that iterates over every ledger block, recomputes the SHA-256 hashes sequentially, and verifies 100% chain integrity.
 
 ### 5.4 Dual-Module System (ESM + CommonJS Bundling)
