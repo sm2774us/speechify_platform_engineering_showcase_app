@@ -169,9 +169,7 @@ npm start
 
 ### 4.4 End-to-End System Sequence Diagram (The Quiet StoreKit Race)
 
-# Entitlements Grace Period Flow
-
-​```mermaid
+```mermaid
 sequenceDiagram
     participant U as User on Mac App
     participant G as Speechify API Gateway
@@ -248,7 +246,7 @@ In production platform engineering, AI agents are force multipliers, but only wh
 +─────────────────────────────────────────────────────────────────────────────────────────+
 | TIER 1: UNATTENDED (Autonomous)                                                         |
 | • Flaky Webhook DLQ Replayer (StoreKit 503 auto-heals with jittered backoff)            |
-| • Synthetic Latency Canary (P99 TTFB monitoring & warm instance pre-scaling)             |
+| • Synthetic Latency Canary (P99 TTFB monitoring & warm instance pre-scaling)            |
 | • Test Suite Generator for edge-case test generation                                    |
 +─────────────────────────────────────────────────────────────────────────────────────────+
                                            │
@@ -257,14 +255,14 @@ In production platform engineering, AI agents are force multipliers, but only wh
 | TIER 2: HUMAN-REVIEWED (Copilot / Supervised)                                           |
 | • B2B Partner API Contract Schema Evolver (OpenAPI 3.1 diffs & compatibility analysis)  |
 | • Database Schema Migration Drafts (Generates DDL with backward-compatible columns)     |
-| • Post-Mortem Incident Root Cause Investigator (Correlates OTel span waterfalls)       |
+| • Post-Mortem Incident Root Cause Investigator (Correlates OTel span waterfalls)        |
 +─────────────────────────────────────────────────────────────────────────────────────────+
                                            │
                                            ▼
 +─────────────────────────────────────────────────────────────────────────────────────────+
 | TIER 3: STRICTLY GATED (Agent CANNOT Act Alone)                                         |
 | • Destructive Database Mutations (DROP TABLE, TRUNCATE, historical ledger rewrites)     |
-| • Financial Balance Adjustments > 50,000 units (Requires Dual 2FA cryptographic keys)    |
+| • Financial Balance Adjustments > 50,000 units (Requires Dual 2FA cryptographic keys)   |
 | • Security Access Revocations & Root Key Rotations (Cloud KMS)                          |
 +─────────────────────────────────────────────────────────────────────────────────────────+
 ```
@@ -390,9 +388,9 @@ spec:
 
 ---
 
-## 8. Summary of Candidate Competencies Demonstrated
+## 8. Summary of Competencies Demonstrated
 
-| Requirement from Speechify Job Description | How It Is Demonstrated in This Codebase |
+| Requirement | How It Is Demonstrated in This Codebase |
 | :--- | :--- |
 | **Proven backend experience in TS/Node** | Full-stack TypeScript backend with microsecond event loops, sub-1ms atomic memory metering, and SHA-256 idempotency guards. |
 | **Direct GCP, Docker & Kubernetes experience** | Cloud Run ingress design, GKE pod anti-affinity and HPA specs, Cloud Pub/Sub ordering keys, and Memorystore Redis caching. |
@@ -404,5 +402,3 @@ spec:
 | **Preference for being corrected & Take-Home rig** | Interactive Take-Home Assessment Sandbox simulating a multi-tab Chrome streaming race condition, live fix toggle, and regression test suite. |
 
 ---
-
-*Speechify Platform Engineering Showcase &bull; Fort Lauderdale, FL / 100% Distributed &bull; Powered by Google AI Studio*
