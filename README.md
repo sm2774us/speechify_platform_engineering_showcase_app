@@ -185,7 +185,7 @@ sequenceDiagram
     E-->>G: 5. Issue 24h Grace Lease Token
     E->>A: 6. Enqueue Cloud Task (Async retry query)
     G-->>U: 7. Audio Stream Chunks (Zero Playback Cutoff)
-​```
+```
 
 ---
 
